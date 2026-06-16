@@ -727,7 +727,7 @@ async function connectToMcQueen() {
 
     // Try anti-DOS service
     try {
-      const antiDosService = await server.getPrimaryService('00020005-574f-4f20-5370-6865726f2121');
+      const antiDosService = await server.getPrimaryService('00020001-574f-4f20-5370-6865726f2121');
       antiDosCharacteristic = await antiDosService.getCharacteristic('00020005-574f-4f20-5370-6865726f2121');
     } catch(e) {
       // Try within main service
