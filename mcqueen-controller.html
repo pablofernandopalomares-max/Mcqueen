@@ -565,14 +565,8 @@ function buildPacket(deviceId, commandId, data = []) {
   let checksum = payload.reduce((s, b) => (s + b) & 0xFF, 0);
   checksum = (~checksum) & 0xFF;
 
-  const packet = [
-    0x8D,                                          // SOP
-    FLAG_RESETS_INACTIVITY, // flags
-    ...payload,
-    checksum,
-    0xD8                                           // EOP
-  ];
-  return new Uint8Array(packet);
+  // 0x38 = hasTargetId|hasSourceId|resetsInactivity, 0x12=chassis, 0x01=app
+  return new Uint8Array([0x8D, 0x38, 0x12, 0x01, ...payload, checksum, 0xD8]);
 }
 
 async function sendPacket(deviceId, commandId, data = []) {
