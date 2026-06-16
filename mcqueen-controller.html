@@ -587,7 +587,7 @@ function buildPacket(deviceId, commandId, data = []) {
   const payload = [deviceId, commandId, seqNum, ...data];
   let checksum = payload.reduce((s, b) => (s + b) & 0xFF, 0);
   checksum = (~checksum) & 0xFF;
-  const inner = escapeBytes([0x0A, ...payload, checksum]);
+  const inner = escapeBytes([0x08, ...payload, checksum]);
   return new Uint8Array([0x8D, ...inner, 0xD8]);
 }
 
@@ -764,8 +764,8 @@ async function connectToMcQueen() {
     await wakeDevice();
     await new Promise(r => setTimeout(r, 500));
 
-    // Initial drive command to confirm
-    await drive(0, 0, 0);
+    // Initial stop via native McQueen command
+    await driveAsRc(0, 0);
 
     setStatus('connected', device.name || 'McQueen');
     enableControls(true);
