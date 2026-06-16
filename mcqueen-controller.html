@@ -578,12 +578,7 @@ function buildPacket(deviceId, commandId, data = []) {
   const inner = escapeBytes([0x0A, ...payload, checksum]);
   return new Uint8Array([0x8D, ...inner, 0xD8]);
 }
-  seqNum = (seqNum + 1) & 0xFF;
-  const payload = [deviceId, commandId, seqNum, ...data];
-  let checksum = payload.reduce((s, b) => (s + b) & 0xFF, 0);
-  checksum = (~checksum) & 0xFF;
-  return new Uint8Array([0x8D, 0x0A, ...payload, checksum, 0xD8]);
-}
+
 
 async function sendPacket(deviceId, commandId, data = []) {
   if (!apiCharacteristic) { log('No conectado', 'warn'); return; }
