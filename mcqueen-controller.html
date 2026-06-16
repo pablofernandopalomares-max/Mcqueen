@@ -649,14 +649,12 @@ async function doSpin() {
 }
 
 async function doHonk() {
-  log('Secuencia completa de arranque...', 'warn');
-  await sendPacket(0x13, 0x0D, []);
-  await new Promise(r => setTimeout(r, 500));
-  await sendPacket(0x16, 0x06, []);
-  await new Promise(r => setTimeout(r, 200));
-  await sendPacket(0x16, 0x07, [0xFF, 0x00, 0x00, 0x01]);
-  await new Promise(r => setTimeout(r, 1000));
-  await sendPacket(0x16, 0x07, [0x00, 0x00, 0x00, 0x00]);
+  log('Test raw motors directo...', 'warn');
+  await sendPacket(0x16, 0x01, [0x01, 0x80, 0x01, 0x80]);
+  log('Motores ON - esperando 2s...', 'warn');
+  await new Promise(r => setTimeout(r, 2000));
+  await sendPacket(0x16, 0x01, [0x00, 0x00, 0x00, 0x00]);
+  log('Motores OFF', 'warn');
 }
 
 // ── Connect ───────────────────────────────────────────
