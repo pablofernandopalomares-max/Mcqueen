@@ -738,11 +738,18 @@ async function connectToMcQueen() {
       }
     }
 
-    // Try wake characteristic
+    // Try wake characteristic (en servicio secundario primero)
     try {
-      wakeCharacteristic = await service.getCharacteristic(SPHERO_WAKE_CHAR);
+      const secSvc = await server.getPrimaryService('00020001-574f-4f20-5370-6865726f2121');
+      wakeCharacteristic = await secSvc.getCharacteristic(SPHERO_WAKE_CHAR);
+      log('Wake char OK', 'info');
     } catch(e) {
-      log('Wake char no encontrada, usando comando', 'warn');
+      try {
+        wakeCharacteristic = await service.getCharacteristic(SPHERO_WAKE_CHAR);
+        log('Wake char OK (principal)', 'info');
+      } catch(e2) {
+        log('Wake char no encontrada', 'warn');
+      }
     }
 
     // Unlock sequence
