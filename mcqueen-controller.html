@@ -565,8 +565,6 @@ function buildPacket(deviceId, commandId, data = []) {
   let checksum = payload.reduce((s, b) => (s + b) & 0xFF, 0);
   checksum = (~checksum) & 0xFF;
 
-  // 0x38 = hasTargetId|hasSourceId|resetsInactivity, 0x12=chassis, 0x01=app
-  return new Uint8Array([0x8D, 0x38, 0x12, 0x01, ...payload, checksum, 0xD8]);
 }
 
 async function sendPacket(deviceId, commandId, data = []) {
@@ -651,10 +649,14 @@ async function doSpin() {
 }
 
 async function doHonk() {
-  log('Test motores RAW!', 'warn');
-  await sendPacket(0x16, 0x01, [0x01, 0x80, 0x01, 0x80]);
-  await new Promise(r => setTimeout(r, 800));
-  await sendPacket(0x16, 0x01, [0x00, 0x00, 0x00, 0x00]);
+  log('Secuencia completa de arranque...', 'warn');
+  await sendPacket(0x13, 0x0D, []);
+  await new Promise(r => setTimeout(r, 500));
+  await sendPacket(0x16, 0x06, []);
+  await new Promise(r => setTimeout(r, 200));
+  await sendPacket(0x16, 0x07, [0xFF, 0x00, 0x00, 0x01]);
+  await new Promise(r => setTimeout(r, 1000));
+  await sendPacket(0x16, 0x07, [0x00, 0x00, 0x00, 0x00]);
 }
 
 // ── Connect ───────────────────────────────────────────
