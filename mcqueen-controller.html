@@ -580,7 +580,7 @@ async function sendPacket(deviceId, commandId, data = []) {
   try {
     const pkt = buildPacket(deviceId, commandId, data);
     log(`→ [${Array.from(pkt).map(b=>b.toString(16).padStart(2,'0')).join(' ')}]`, 'send');
-    await apiCharacteristic.writeValueWithoutResponse(pkt);
+    await apiCharacteristic.writeValue(pkt);
   } catch(e) {
     log(`Error enviando: ${e.message}`, 'error');
   }
