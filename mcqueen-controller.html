@@ -570,6 +570,18 @@ function escapeBytes(data) {
   return out;
 }
 
+function encodeNumberLM(n) {
+  const absN = Math.round(Math.abs(n * 3968));
+  const signByte = n === 0 ? 0x00 : (n > 0 ? 0x30 : 0xB0);
+  const highNibble = (absN >> 8) & 0x0F;
+  return [signByte | highNibble, absN & 0xFF, 0x00, 0x00];
+}
+
+async function driveAsRc(heading, speed) {
+  const data = [...encodeNumberLM(heading), ...encodeNumberLM(speed)];
+  await sendPacket(DEVICE_DRIVING, 0x02, data);
+}
+
 function buildPacket(deviceId, commandId, data = []) {
   seqNum = (seqNum + 1) & 0xFF;
   const payload = [deviceId, commandId, seqNum, ...data];
@@ -662,12 +674,14 @@ async function doSpin() {
 }
 
 async function doHonk() {
-  log('Test raw motors directo...', 'warn');
-  await sendPacket(0x16, 0x01, [0x01, 0x80, 0x01, 0x80]);
-  log('Motores ON - esperando 2s...', 'warn');
+  log('=== TEST driveAsRc (cmd 0x02 — nativo McQueen) ===', 'warn');
+  await sendPacket(DEVICE_POWER, 0x0D, []);
+  await new Promise(r => setTimeout(r, 500));
+  log('driveAsRc(heading=0, speed=1.0) — adelante 2s...', 'warn');
+  await driveAsRc(0, 1.0);
   await new Promise(r => setTimeout(r, 2000));
-  await sendPacket(0x16, 0x01, [0x00, 0x00, 0x00, 0x00]);
-  log('Motores OFF', 'warn');
+  await driveAsRc(0, 0);
+  log('Stop', 'warn');
 }
 
 // ── Connect ───────────────────────────────────────────
