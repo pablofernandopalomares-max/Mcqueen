@@ -607,7 +607,7 @@ async function sendPacket(deviceId, commandId, data = []) {
 async function unlockAntiDos() {
   if (!antiDosCharacteristic) return;
   try {
-    const magic = new TextEncoder().encode('011i3');
+    const magic = new TextEncoder().encode('usetheforce...band');
     await antiDosCharacteristic.writeValue(magic);
     log('Anti-DOS desbloqueado ✓', 'info');
   } catch(e) {
