@@ -567,7 +567,7 @@ function buildPacket(deviceId, commandId, data = []) {
 
   const packet = [
     0x8D,                                          // SOP
-    FLAG_RESPONSE_REQUESTS | FLAG_RESETS_INACTIVITY, // flags
+    FLAG_RESETS_INACTIVITY, // flags
     ...payload,
     checksum,
     0xD8                                           // EOP
