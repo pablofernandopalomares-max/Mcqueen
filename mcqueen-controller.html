@@ -7,6 +7,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>McQueen Controller</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Racing+Sans+One&family=Barlow+Condensed:wght@400;600;700&display=swap');
 
@@ -35,7 +37,6 @@
     user-select: none;
   }
 
-  /* HEADER */
   header {
     background: var(--red);
     padding: 10px 16px 8px;
@@ -56,7 +57,6 @@
     text-shadow: 2px 2px 0px rgba(0,0,0,0.4);
     line-height: 1;
   }
-
   .logo span { color: var(--yellow); }
 
   .status-pill {
@@ -72,19 +72,11 @@
     text-transform: uppercase;
   }
 
-  .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--muted);
-    transition: background 0.3s;
-    flex-shrink: 0;
-  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); transition: background 0.3s; flex-shrink: 0; }
   .dot.connected { background: #00E676; box-shadow: 0 0 6px #00E676; }
   .dot.connecting { background: var(--yellow); animation: pulse 0.8s infinite; }
-
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  /* CONNECT BUTTON */
   #connectBtn {
     background: none;
     border: 2px solid rgba(255,255,255,0.5);
@@ -103,115 +95,29 @@
   #connectBtn:active { background: rgba(255,255,255,0.2); }
   #connectBtn.connected { border-color: #00E676; color: #00E676; }
 
-  /* TELEMETRY BAR */
-  .telemetry {
-    background: var(--panel);
-    border-bottom: 1px solid var(--border);
-    padding: 6px 16px;
-    display: flex;
-    gap: 16px;
-    flex-shrink: 0;
-  }
-
-  .telem-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1px;
-  }
-
-  .telem-label {
-    font-size: 9px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--muted);
-    font-weight: 600;
-  }
-
-  .telem-value {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--yellow);
-    line-height: 1;
-  }
-
+  .telemetry { background: var(--panel); border-bottom: 1px solid var(--border); padding: 6px 16px; display: flex; gap: 16px; flex-shrink: 0; }
+  .telem-item { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+  .telem-label { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .telem-value { font-size: 18px; font-weight: 700; color: var(--yellow); line-height: 1; }
   .telem-unit { font-size: 10px; color: var(--muted); }
 
-  /* SPEED METER */
-  .speed-bar-wrap {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 4px;
-  }
+  .speed-bar-wrap { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+  .speed-bar-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .speed-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--red), var(--yellow)); border-radius: 3px; transition: width 0.1s; }
 
-  .speed-bar-track {
-    height: 6px;
-    background: var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-  }
+  main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
 
-  .speed-bar-fill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, var(--red), var(--yellow));
-    border-radius: 3px;
-    transition: width 0.1s;
-  }
+  .controls-area { flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 16px; gap: 16px; position: relative; }
 
-  /* MAIN AREA */
-  main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    position: relative;
-  }
-
-  /* JOYSTICK ZONE */
-  .controls-area {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px;
-    gap: 16px;
-    position: relative;
-  }
-
-  /* Left: joystick */
-  .joystick-container {
-    position: relative;
-    width: 180px;
-    height: 180px;
-    flex-shrink: 0;
-  }
-
-  .joystick-base {
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    background: var(--panel);
-    border: 2px solid var(--border);
-    position: relative;
-    touch-action: none;
-  }
-
-  /* Track lines */
-  .joystick-base::before, .joystick-base::after {
-    content: '';
-    position: absolute;
-    background: var(--border);
-  }
+  .joystick-container { position: relative; width: 180px; height: 180px; flex-shrink: 0; }
+  .joystick-base { width: 180px; height: 180px; border-radius: 50%; background: var(--panel); border: 2px solid var(--border); position: relative; touch-action: none; }
+  .joystick-base::before, .joystick-base::after { content: ''; position: absolute; background: var(--border); }
   .joystick-base::before { width: 100%; height: 1px; top: 50%; left: 0; }
   .joystick-base::after  { width: 1px; height: 100%; top: 0; left: 50%; }
 
   .joystick-knob {
     position: absolute;
-    width: 70px;
-    height: 70px;
+    width: 70px; height: 70px;
     border-radius: 50%;
     background: radial-gradient(circle at 35% 35%, var(--red-hot), var(--red));
     border: 3px solid rgba(255,255,255,0.15);
@@ -222,200 +128,51 @@
     pointer-events: none;
   }
 
-  .joystick-label {
-    text-align: center;
-    margin-top: 8px;
-    font-size: 10px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--muted);
-    font-weight: 600;
-  }
+  .joystick-label { text-align: center; margin-top: 8px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); font-weight: 600; }
 
-  /* Right: action buttons */
-  .action-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    align-items: center;
-  }
-
+  .action-panel { display: flex; flex-direction: column; gap: 12px; align-items: center; }
   .action-btn {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    color: #fff;
-    transition: transform 0.1s, box-shadow 0.1s;
-    -webkit-tap-highlight-color: transparent;
+    width: 72px; height: 72px; border-radius: 50%; border: none; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase; color: #fff;
+    transition: transform 0.1s, box-shadow 0.1s; -webkit-tap-highlight-color: transparent;
   }
-
-  .action-btn:active {
-    transform: scale(0.92);
-    box-shadow: none !important;
-  }
-
-  .btn-honk {
-    background: radial-gradient(circle at 35% 35%, #FFE033, var(--yellow));
-    color: var(--black);
-    box-shadow: 0 4px 12px rgba(255,215,0,0.3);
-    font-size: 22px;
-  }
-
-  .btn-drift {
-    background: radial-gradient(circle at 35% 35%, #6A0DAD, #3D007A);
-    box-shadow: 0 4px 12px rgba(100,0,200,0.3);
-    font-size: 18px;
-  }
-
-  .btn-spin {
-    background: radial-gradient(circle at 35% 35%, #00A0FF, #0060CC);
-    box-shadow: 0 4px 12px rgba(0,100,255,0.3);
-    font-size: 18px;
-  }
-
+  .action-btn:active { transform: scale(0.92); box-shadow: none !important; }
+  .btn-honk { background: radial-gradient(circle at 35% 35%, #FFE033, var(--yellow)); color: var(--black); box-shadow: 0 4px 12px rgba(255,215,0,0.3); font-size: 22px; }
+  .btn-drift { background: radial-gradient(circle at 35% 35%, #6A0DAD, #3D007A); box-shadow: 0 4px 12px rgba(100,0,200,0.3); font-size: 18px; }
+  .btn-spin  { background: radial-gradient(circle at 35% 35%, #00A0FF, #0060CC); box-shadow: 0 4px 12px rgba(0,100,255,0.3); font-size: 18px; }
   .btn-label { font-size: 9px; opacity: 0.85; }
 
-  /* Center top: speed */
-  .speed-display {
-    position: absolute;
-    top: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    pointer-events: none;
-  }
-
-  .speed-number {
-    font-family: 'Racing Sans One', cursive;
-    font-size: 52px;
-    line-height: 1;
-    color: var(--text);
-  }
-
+  .speed-display { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+  .speed-number { font-family: 'Racing Sans One', cursive; font-size: 52px; line-height: 1; color: var(--text); }
   .speed-unit { font-size: 12px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
 
-  /* BOTTOM CONTROLS */
-  .bottom-bar {
-    background: var(--panel);
-    border-top: 1px solid var(--border);
-    padding: 10px 16px;
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
+  .bottom-bar { background: var(--panel); border-top: 1px solid var(--border); padding: 10px 16px; display: flex; gap: 10px; justify-content: center; flex-shrink: 0; }
   .bottom-btn {
-    flex: 1;
-    max-width: 120px;
-    height: 44px;
-    border-radius: 8px;
-    border: 2px solid var(--border);
-    background: var(--dark);
-    color: var(--text);
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
+    flex: 1; max-width: 120px; height: 44px; border-radius: 8px; border: 2px solid var(--border);
+    background: var(--dark); color: var(--text); font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    cursor: pointer; transition: background 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px;
   }
-
   .bottom-btn:active { background: var(--border); }
-  .bottom-btn.active { border-color: var(--red); color: var(--red); }
 
-  /* LOG */
-  .log-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.92);
-    z-index: 100;
-    flex-direction: column;
-    padding: 20px;
-  }
-
+  .log-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 100; flex-direction: column; padding: 20px; }
   .log-overlay.visible { display: flex; }
-
-  .log-title {
-    font-family: 'Racing Sans One', cursive;
-    color: var(--yellow);
-    font-size: 20px;
-    margin-bottom: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
+  .log-title { font-family: 'Racing Sans One', cursive; color: var(--yellow); font-size: 20px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
   .log-close { background: none; border: none; color: var(--text); font-size: 24px; cursor: pointer; }
+  #logContent { flex: 1; overflow-y: auto; font-family: monospace; font-size: 12px; color: #00E676; background: #050505; border-radius: 8px; padding: 12px; line-height: 1.6; }
 
-  #logContent {
-    flex: 1;
-    overflow-y: auto;
-    font-family: monospace;
-    font-size: 12px;
-    color: #00E676;
-    background: #050505;
-    border-radius: 8px;
-    padding: 12px;
-    line-height: 1.6;
-  }
-
-  /* INSTRUCTIONS */
-  .instructions {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    background: linear-gradient(to top, rgba(10,10,10,0.98) 60%, transparent);
-    padding: 20px 24px 24px;
-    text-align: center;
-    pointer-events: none;
-  }
-
-  .instructions p {
-    color: var(--muted);
-    font-size: 14px;
-    line-height: 1.5;
-    max-width: 280px;
-    margin: 0 auto;
-  }
-
+  .instructions { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(10,10,10,0.98) 60%, transparent); padding: 20px 24px 24px; text-align: center; pointer-events: none; }
+  .instructions p { color: var(--muted); font-size: 14px; line-height: 1.5; max-width: 280px; margin: 0 auto; }
   .instructions strong { color: var(--yellow); }
 
-  /* WAKE ANIMATION */
-  @keyframes wakeFlash {
-    0% { box-shadow: 0 0 0 0 rgba(255,215,0,0.6); }
-    70% { box-shadow: 0 0 0 20px rgba(255,215,0,0); }
-    100% { box-shadow: 0 0 0 0 rgba(255,215,0,0); }
-  }
-
+  @keyframes wakeFlash { 0%{box-shadow:0 0 0 0 rgba(255,215,0,0.6)} 70%{box-shadow:0 0 0 20px rgba(255,215,0,0)} 100%{box-shadow:0 0 0 0 rgba(255,215,0,0)} }
   .waking { animation: wakeFlash 0.6s ease-out; }
 
-  /* DISABLED STATE */
   .controls-disabled .joystick-base,
   .controls-disabled .action-btn,
-  .controls-disabled .bottom-btn:not(#logBtn) {
-    opacity: 0.4;
-    pointer-events: none;
-  }
+  .controls-disabled .bottom-btn:not(#logBtn) { opacity: 0.4; pointer-events: none; }
 </style>
 </head>
 <body>
@@ -430,138 +187,78 @@
 </header>
 
 <div class="telemetry">
-  <div class="telem-item">
-    <div class="telem-label">Velocidad</div>
-    <div class="telem-value" id="speedVal">0</div>
-    <div class="telem-unit">%</div>
-  </div>
-  <div class="telem-item">
-    <div class="telem-label">Ángulo</div>
-    <div class="telem-value" id="angleVal">0</div>
-    <div class="telem-unit">°</div>
-  </div>
-  <div class="speed-bar-wrap">
-    <div class="telem-label">Motor</div>
-    <div class="speed-bar-track"><div class="speed-bar-fill" id="speedBar"></div></div>
-  </div>
-  <div class="telem-item">
-    <div class="telem-label">Estado</div>
-    <div class="telem-value" id="modeVal" style="font-size:13px;color:var(--muted)">—</div>
-  </div>
+  <div class="telem-item"><div class="telem-label">Velocidad</div><div class="telem-value" id="speedVal">0</div><div class="telem-unit">%</div></div>
+  <div class="telem-item"><div class="telem-label">Angulo</div><div class="telem-value" id="angleVal">0</div><div class="telem-unit">deg</div></div>
+  <div class="speed-bar-wrap"><div class="telem-label">Motor</div><div class="speed-bar-track"><div class="speed-bar-fill" id="speedBar"></div></div></div>
+  <div class="telem-item"><div class="telem-label">Estado</div><div class="telem-value" id="modeVal" style="font-size:13px;color:var(--muted)">-</div></div>
 </div>
 
 <main id="mainArea" class="controls-disabled">
   <div class="controls-area">
-
-    <!-- Joystick -->
     <div class="joystick-container">
       <div class="joystick-base" id="joystickBase">
         <div class="joystick-knob" id="joystickKnob"></div>
       </div>
-      <div class="joystick-label">Dirección</div>
+      <div class="joystick-label">Direccion</div>
     </div>
-
-    <!-- Speed display center -->
     <div class="speed-display">
       <div class="speed-number" id="bigSpeed">0</div>
       <div class="speed-unit">Velocidad</div>
     </div>
-
-    <!-- Action buttons -->
     <div class="action-panel">
-      <button class="action-btn btn-honk" id="btnHonk">
-        📣
-        <span class="btn-label">Bocina</span>
-      </button>
-      <button class="action-btn btn-drift" id="btnDrift">
-        💨
-        <span class="btn-label">Drift</span>
-      </button>
-      <button class="action-btn btn-spin" id="btnSpin">
-        🔄
-        <span class="btn-label">Giro 360</span>
-      </button>
+      <button class="action-btn btn-honk" id="btnHonk">&#128483;<span class="btn-label">Test 2s</span></button>
+      <button class="action-btn btn-drift" id="btnDrift">&#128168;<span class="btn-label">Drift</span></button>
+      <button class="action-btn btn-spin" id="btnSpin">&#128260;<span class="btn-label">Giro</span></button>
     </div>
   </div>
-
-  <!-- Instructions when disconnected -->
   <div class="instructions" id="instructions">
-    <p>Presioná <strong>Conectar</strong> arriba, luego elegí <strong>Lightning McQueen</strong> en la lista de dispositivos Bluetooth.<br><br>
-    Asegurate que el McQueen esté encendido.</p>
+    <p>Presiona <strong>Conectar</strong> arriba, luego elige <strong>Lightning McQueen</strong> en la lista Bluetooth.<br><br>Asegurate que el McQueen este encendido.</p>
   </div>
 </main>
 
 <div class="bottom-bar">
-  <button class="bottom-btn" id="wakeBtn">⚡ Despertar</button>
-  <button class="bottom-btn" id="sleepBtn">😴 Dormir</button>
-  <button class="bottom-btn" id="logBtn">📋 Log</button>
+  <button class="bottom-btn" id="wakeBtn">&#9889; Wake</button>
+  <button class="bottom-btn" id="sleepBtn">&#128564; Sleep</button>
+  <button class="bottom-btn" id="logBtn">&#128203; Log</button>
 </div>
 
-<!-- Log overlay -->
 <div class="log-overlay" id="logOverlay">
-  <div class="log-title">
-    Log BLE
-    <button class="log-close" id="logClose">✕</button>
-  </div>
+  <div class="log-title">Log BLE<button class="log-close" id="logClose">&#x2715;</button></div>
   <div id="logContent"></div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-// SPHERO V2 BLE PROTOCOL — Lightning McQueen
-// Based on community reverse engineering: igbopie/spherov2.js
-// ═══════════════════════════════════════════════════════
+// Sphero V2 BLE Protocol - Lightning McQueen (igbopie/spherov2.js)
 
-const SPHERO_SERVICE        = '00010001-574f-4f20-5370-6865726f2121';
-const SPHERO_API_V2_CHAR    = '00010002-574f-4f20-5370-6865726f2121';
-const SPHERO_ANTIDOS_CHAR   = '00020005-574f-4f20-5370-6865726f2121';
-const SPHERO_TX_POWER_CHAR  = '00020001-574f-4f20-5370-6865726f2121';
-const SPHERO_WAKE_CHAR      = '00020003-574f-4f20-5370-6865726f2121';
+const SPHERO_SERVICE     = '00010001-574f-4f20-5370-6865726f2121';
+const SPHERO_API_V2_CHAR = '00010002-574f-4f20-5370-6865726f2121';
+const SPHERO_ANTIDOS     = '00020005-574f-4f20-5370-6865726f2121';
+const SPHERO_WAKE        = '00020003-574f-4f20-5370-6865726f2121';
+const SPHERO_DFU         = '00020002-574f-4f20-5370-6865726f2121';
+const SEC_SERVICE        = '00020001-574f-4f20-5370-6865726f2121';
 
-// Packet flags
-const FLAG_RESPONSE_REQUESTS   = 0x02;
-const FLAG_RESETS_INACTIVITY   = 0x08;
-const FLAG_COMMAND             = 0x00;
+const FLAG_RESETS_INACTIVITY = 0x08;
+const DEVICE_DRIVING = 0x16;
+const DEVICE_POWER   = 0x13;
 
-// Device IDs
-const DEVICE_DRIVING  = 0x16;
-const DEVICE_POWER    = 0x13;
-const DEVICE_USER_IO  = 0x1A;
+let device = null, server = null, apiChar = null;
+let antiDosChar = null, wakeChar = null;
+let seqNum = 0, connected = false;
 
-// Command IDs
-const CMD_DRIVE         = 0x07;
-const CMD_RAW_MOTORS    = 0x01;
-const CMD_WAKE          = 0x0D;
-const CMD_SLEEP         = 0x01;
-const CMD_SET_LED_ALL   = 0x0E;
-const CMD_PLAY_SOUND    = 0x07;
-
-// McQueen-specific LED IDs
-const LED_HEAD_LIGHTS   = 0x07;
-const LED_TAIL_LIGHTS   = 0x08;
-
-let device = null;
-let server = null;
-let apiCharacteristic = null;
-let antiDosCharacteristic = null;
-let wakeCharacteristic = null;
-let seqNum = 0;
-let connected = false;
-
-// ── Logging ──────────────────────────────────────────
 const logEl = document.getElementById('logContent');
-function log(msg, type='info') {
+function log(msg, type) {
+  type = type || 'info';
   const colors = { info:'#00E676', warn:'#FFD700', error:'#FF5252', send:'#64B5F6', recv:'#CE93D8' };
-  const time = new Date().toLocaleTimeString('es-AR', {hour12:false});
-  logEl.innerHTML += `<div style="color:${colors[type]||colors.info}">[${time}] ${msg}</div>`;
+  const t = new Date().toLocaleTimeString('es-AR', {hour12:false});
+  logEl.innerHTML += '<div style="color:' + (colors[type]||colors.info) + '">[' + t + '] ' + msg + '</div>';
   logEl.scrollTop = logEl.scrollHeight;
-  console.log(`[McQueen][${type}] ${msg}`);
+  console.log('[McQ][' + type + '] ' + msg);
 }
 
-// ── Packet Builder ────────────────────────────────────
 function escapeBytes(data) {
   const out = [];
-  for (const b of data) {
+  for (let i = 0; i < data.length; i++) {
+    const b = data[i];
     if      (b === 0xAB) { out.push(0xAB, 0x23); }
     else if (b === 0x8D) { out.push(0xAB, 0x05); }
     else if (b === 0xD8) { out.push(0xAB, 0x50); }
@@ -570,131 +267,97 @@ function escapeBytes(data) {
   return out;
 }
 
-function encodeNumberLM(n) {
-  const absN = Math.round(Math.abs(n * 3968));
-  const signByte = n === 0 ? 0x00 : (n > 0 ? 0x30 : 0xB0);
-  const highNibble = (absN >> 8) & 0x0F;
-  return [signByte | highNibble, absN & 0xFF, 0x00, 0x00];
+function buildPacket(deviceId, cmdId, data) {
+  data = data || [];
+  seqNum = (seqNum + 1) & 0xFF;
+  const payload = [deviceId, cmdId, seqNum].concat(data);
+  let cs = 0;
+  for (let i = 0; i < payload.length; i++) cs = (cs + payload[i]) & 0xFF;
+  cs = (~cs) & 0xFF;
+  const inner = escapeBytes([FLAG_RESETS_INACTIVITY].concat(payload).concat([cs]));
+  return new Uint8Array([0x8D].concat(inner).concat([0xD8]));
+}
+
+async function sendPacket(deviceId, cmdId, data) {
+  if (!apiChar) { log('No conectado', 'warn'); return; }
+  try {
+    const pkt = buildPacket(deviceId, cmdId, data);
+    log('-> [' + Array.from(pkt).map(function(b){return b.toString(16).padStart(2,'0');}).join(' ') + ']', 'send');
+    await apiChar.writeValue(pkt);
+  } catch(e) { log('Error: ' + e.message, 'error'); }
+}
+
+// IEEE 754 float32 big-endian (Sphero V2 driveAsRc protocol)
+function encodeF32(n) {
+  const buf = new ArrayBuffer(4);
+  new DataView(buf).setFloat32(0, n, false);
+  return Array.from(new Uint8Array(buf));
 }
 
 async function driveAsRc(heading, speed) {
-  const data = [...encodeNumberLM(heading), ...encodeNumberLM(speed)];
-  await sendPacket(DEVICE_DRIVING, 0x02, data);
+  await sendPacket(DEVICE_DRIVING, 0x02, encodeF32(heading).concat(encodeF32(speed)));
 }
 
-function buildPacket(deviceId, commandId, data = []) {
-  seqNum = (seqNum + 1) & 0xFF;
-  const payload = [deviceId, commandId, seqNum, ...data];
-  let checksum = payload.reduce((s, b) => (s + b) & 0xFF, 0);
-  checksum = (~checksum) & 0xFF;
-  const inner = escapeBytes([0x08, ...payload, checksum]);
-  return new Uint8Array([0x8D, ...inner, 0xD8]);
-}
+async function stopDrive() { await driveAsRc(0, 0); }
 
-
-async function sendPacket(deviceId, commandId, data = []) {
-  if (!apiCharacteristic) { log('No conectado', 'warn'); return; }
-  try {
-    const pkt = buildPacket(deviceId, commandId, data);
-    log(`→ [${Array.from(pkt).map(b=>b.toString(16).padStart(2,'0')).join(' ')}]`, 'send');
-    await apiCharacteristic.writeValue(pkt);
-  } catch(e) {
-    log(`Error enviando: ${e.message}`, 'error');
-  }
-}
-
-// ── Anti-DOS unlock (required by McQueen) ────────────
 async function unlockAntiDos() {
-  if (!antiDosCharacteristic) return;
+  if (!antiDosChar) { log('Anti-DOS no disponible', 'warn'); return; }
   try {
-    const magic = new TextEncoder().encode('usetheforce...band');
-    await antiDosCharacteristic.writeValue(magic);
-    log('Anti-DOS desbloqueado ✓', 'info');
-  } catch(e) {
-    log(`Anti-DOS error: ${e.message}`, 'warn');
-  }
+    await antiDosChar.writeValue(new TextEncoder().encode('usetheforce...band'));
+    log('Anti-DOS OK', 'info');
+  } catch(e) { log('Anti-DOS error: ' + e.message, 'warn'); }
 }
 
-async function setTxPower() {
-  try {
-    const service2 = await server.getPrimaryService('00020001-574f-4f20-5370-6865726f2121');
-  } catch(e) {}
-}
-
-// ── Wake / Sleep ──────────────────────────────────────
 async function wakeDevice() {
-  if (!wakeCharacteristic) {
-    log('Intentando wake por comando...', 'info');
-    await sendPacket(DEVICE_POWER, 0x0D);
-    return;
+  if (wakeChar) {
+    try { await wakeChar.writeValue(new Uint8Array([0x01])); log('Wake OK', 'info'); return; }
+    catch(e) { log('Wake char error: ' + e.message, 'warn'); }
   }
-  try {
-    await wakeCharacteristic.writeValue(new Uint8Array([0x01]));
-    log('Wake enviado ✓', 'info');
-  } catch(e) {
-    log(`Wake error: ${e.message}`, 'warn');
-    await sendPacket(DEVICE_POWER, 0x0D);
-  }
+  log('Wake por comando...', 'info');
+  await sendPacket(DEVICE_POWER, 0x0D, []);
 }
 
 async function sleepDevice() {
-  await sendPacket(DEVICE_POWER, CMD_SLEEP);
+  await sendPacket(DEVICE_POWER, 0x01, []);
   log('Sleep enviado', 'info');
 }
 
-// ── Driving ───────────────────────────────────────────
-// Speed: 0-255, heading: 0-359, flags: 0=forward,1=backward
-async function drive(speed, heading, flags = 0) {
-  const h_msb = (heading >> 8) & 0xFF;
-  const h_lsb = heading & 0xFF;
-  await sendPacket(DEVICE_DRIVING, CMD_DRIVE, [speed, h_msb, h_lsb, flags]);
+// Boton Test: avanza 2 segundos y para
+async function doHonk() {
+  log('=== TEST adelante 2s ===', 'warn');
+  await driveAsRc(0, 1.0);
+  await new Promise(function(r) { setTimeout(r, 2000); });
+  await driveAsRc(0, 0);
+  log('Stop OK', 'warn');
 }
 
-async function stopDrive() {
-  await drive(0, lastHeading, 0);
-}
-
-// ── Special moves ─────────────────────────────────────
 async function doDrift() {
   log('Drift!', 'warn');
-  await drive(200, 60, 0);
-  await new Promise(r => setTimeout(r, 400));
-  await drive(180, 300, 0);
-  await new Promise(r => setTimeout(r, 400));
-  await drive(0, 0, 0);
+  await driveAsRc(0.4, 0.8);
+  await new Promise(function(r) { setTimeout(r, 500); });
+  await driveAsRc(-0.4, 0.7);
+  await new Promise(function(r) { setTimeout(r, 500); });
+  await driveAsRc(0, 0);
 }
 
 async function doSpin() {
-  log('Spin 360!', 'warn');
+  log('Spin!', 'warn');
   for (let i = 0; i < 4; i++) {
-    await drive(150, i * 90, 0);
-    await new Promise(r => setTimeout(r, 200));
+    await driveAsRc(i % 2 === 0 ? 1.0 : -1.0, 0.6);
+    await new Promise(function(r) { setTimeout(r, 250); });
   }
-  await drive(0, 0, 0);
-}
-
-async function doHonk() {
-  log('=== TEST driveAsRc (cmd 0x02 — nativo McQueen) ===', 'warn');
-  await sendPacket(DEVICE_POWER, 0x0D, []);
-  await new Promise(r => setTimeout(r, 500));
-  log('driveAsRc(heading=0, speed=1.0) — adelante 2s...', 'warn');
-  await driveAsRc(0, 1.0);
-  await new Promise(r => setTimeout(r, 2000));
   await driveAsRc(0, 0);
-  log('Stop', 'warn');
 }
 
-// ── Connect ───────────────────────────────────────────
 async function connectToMcQueen() {
   if (!navigator.bluetooth) {
-    log('Web Bluetooth no disponible. Usá Chrome en Android.', 'error');
-    alert('⚠️ Web Bluetooth no disponible.\n\nUsá Google Chrome en tu Samsung S24.\nNo funciona en Firefox o Samsung Internet.');
+    log('Web Bluetooth no disponible. Usa Chrome en Android.', 'error');
+    alert('Usa Google Chrome en tu Samsung S24.');
     return;
   }
-
   try {
     setStatus('connecting', 'Buscando...');
-    log('Escaneando dispositivos Bluetooth...', 'info');
+    log('Escaneando...', 'info');
 
     device = await navigator.bluetooth.requestDevice({
       filters: [
@@ -704,307 +367,187 @@ async function connectToMcQueen() {
         { namePrefix: 'Sphero' },
         { services: [SPHERO_SERVICE] }
       ],
-      optionalServices: [
-        SPHERO_SERVICE,
-        '00020001-574f-4f20-5370-6865726f2121',
-        '00020005-574f-4f20-5370-6865726f2121',
-      ]
+      optionalServices: [SPHERO_SERVICE, SEC_SERVICE]
     });
 
-    log(`Dispositivo: ${device.name || 'Sin nombre'} (${device.id})`, 'info');
+    log('Dispositivo: ' + (device.name || 'Sin nombre'), 'info');
     device.addEventListener('gattserverdisconnected', onDisconnected);
 
     setStatus('connecting', 'Conectando...');
     server = await device.gatt.connect();
-    log('GATT conectado ✓', 'info');
+    log('GATT OK', 'info');
 
-    // Get main service
-    const service = await server.getPrimaryService(SPHERO_SERVICE);
-    log('Servicio Sphero encontrado ✓', 'info');
+    const svc = await server.getPrimaryService(SPHERO_SERVICE);
+    log('Servicio principal OK', 'info');
 
-    // API characteristic
-    apiCharacteristic = await service.getCharacteristic(SPHERO_API_V2_CHAR);
-    log('Característica API V2 ✓', 'info');
+    apiChar = await svc.getCharacteristic(SPHERO_API_V2_CHAR);
+    log('API V2 OK', 'info');
 
-    // Notifications
-    await apiCharacteristic.startNotifications();
-    apiCharacteristic.addEventListener('characteristicvaluechanged', onNotification);
+    let secSvc = null;
+    try { secSvc = await server.getPrimaryService(SEC_SERVICE); log('Servicio sec OK', 'info'); }
+    catch(e) { log('Servicio sec no encontrado', 'warn'); }
 
-    // Try anti-DOS service
     try {
-      const antiDosService = await server.getPrimaryService('00020001-574f-4f20-5370-6865726f2121');
-      antiDosCharacteristic = await antiDosService.getCharacteristic('00020005-574f-4f20-5370-6865726f2121');
+      antiDosChar = secSvc ? await secSvc.getCharacteristic(SPHERO_ANTIDOS) : await svc.getCharacteristic(SPHERO_ANTIDOS);
       log('Anti-DOS char OK', 'info');
-    } catch(e) {
-      // Try within main service
-      try {
-        antiDosCharacteristic = await service.getCharacteristic(SPHERO_ANTIDOS_CHAR);
-      } catch(e2) {
-        log('Anti-DOS char no encontrada (puede no ser necesaria)', 'warn');
-      }
-    }
+    } catch(e) { log('Anti-DOS char no encontrada', 'warn'); }
 
-    // Try wake characteristic (en servicio secundario primero)
     try {
-      const secSvc = await server.getPrimaryService('00020001-574f-4f20-5370-6865726f2121');
-      wakeCharacteristic = await secSvc.getCharacteristic(SPHERO_WAKE_CHAR);
+      wakeChar = secSvc ? await secSvc.getCharacteristic(SPHERO_WAKE) : await svc.getCharacteristic(SPHERO_WAKE);
       log('Wake char OK', 'info');
-    } catch(e) {
-      try {
-        wakeCharacteristic = await service.getCharacteristic(SPHERO_WAKE_CHAR);
-        log('Wake char OK (principal)', 'info');
-      } catch(e2) {
-        log('Wake char no encontrada', 'warn');
-      }
-    }
+    } catch(e) { log('Wake char no encontrada', 'warn'); }
 
-    // Unlock sequence
+    // PASO 1: Anti-DOS ANTES de cualquier subscripcion
     await unlockAntiDos();
-    await new Promise(r => setTimeout(r, 200));
-    await wakeDevice();
-    await new Promise(r => setTimeout(r, 500));
 
-    // Initial stop via native McQueen command
+    // PASO 2: Subscribir DFU (requerido por firmware McQueen)
+    try {
+      const dfuChar = secSvc ? await secSvc.getCharacteristic(SPHERO_DFU) : await svc.getCharacteristic(SPHERO_DFU);
+      await dfuChar.startNotifications();
+      log('DFU subscrito OK', 'info');
+    } catch(e) { log('DFU no disponible', 'warn'); }
+
+    // PASO 3: Subscribir API V2 y esperar notificacion init del auto
+    await apiChar.startNotifications();
+    log('Esperando init McQueen (max 5s)...', 'info');
+    await new Promise(function(resolve) {
+      const timer = setTimeout(function() { log('Timeout init, continuando...', 'warn'); resolve(); }, 5000);
+      function handler(event) {
+        const bytes = Array.from(new Uint8Array(event.target.value.buffer));
+        log('<- INIT [' + bytes.map(function(b){return b.toString(16).padStart(2,'0');}).join(' ') + ']', 'recv');
+        clearTimeout(timer);
+        apiChar.removeEventListener('characteristicvaluechanged', handler);
+        resolve();
+      }
+      apiChar.addEventListener('characteristicvaluechanged', handler);
+    });
+    apiChar.addEventListener('characteristicvaluechanged', onNotification);
+
+    // PASO 4: Wake solo despues que el auto senalo estar listo
+    await wakeDevice();
+    await new Promise(function(r) { setTimeout(r, 800); });
     await driveAsRc(0, 0);
 
     setStatus('connected', device.name || 'McQueen');
     enableControls(true);
     document.getElementById('instructions').style.display = 'none';
     updateMode('Listo');
-    log('¡Conexión exitosa! Ka-chow! 🏎️', 'info');
+    log('Conexion exitosa! Ka-chow!', 'info');
 
   } catch(e) {
-    if (e.name === 'NotFoundError') {
-      log('No se encontró el dispositivo. ¿Está encendido?', 'warn');
-    } else {
-      log(`Error de conexión: ${e.message}`, 'error');
-    }
+    if (e.name === 'NotFoundError') log('Dispositivo no encontrado. Esta encendido?', 'warn');
+    else log('Error: ' + e.message, 'error');
     setStatus('disconnected', 'Desconectado');
   }
 }
 
 function onDisconnected() {
-  connected = false;
-  apiCharacteristic = null;
+  connected = false; apiChar = null;
   setStatus('disconnected', 'Desconectado');
   enableControls(false);
   document.getElementById('instructions').style.display = '';
-  updateMode('—');
-  log('Dispositivo desconectado', 'warn');
+  updateMode('-');
+  log('Desconectado', 'warn');
 }
 
 function onNotification(event) {
-  const value = event.target.value;
-  const bytes = Array.from(new Uint8Array(value.buffer));
-  log(`← [${bytes.map(b=>b.toString(16).padStart(2,'0')).join(' ')}]`, 'recv');
+  const bytes = Array.from(new Uint8Array(event.target.value.buffer));
+  log('<- [' + bytes.map(function(b){return b.toString(16).padStart(2,'0');}).join(' ') + ']', 'recv');
 }
 
-// ── UI Helpers ────────────────────────────────────────
 function setStatus(state, text) {
   const dot = document.getElementById('statusDot');
-  const statusText = document.getElementById('statusText');
+  const stEl = document.getElementById('statusText');
   const btn = document.getElementById('connectBtn');
-
-  dot.className = 'dot ' + (state === 'connected' ? 'connected' : state === 'connecting' ? 'connecting' : '');
-  statusText.textContent = text;
-
-  if (state === 'connected') {
-    connected = true;
-    btn.textContent = 'Desconectar';
-    btn.className = 'connected';
-  } else {
-    connected = false;
-    btn.textContent = 'Conectar';
-    btn.className = '';
-  }
+  dot.className = 'dot ' + (state==='connected'?'connected':state==='connecting'?'connecting':'');
+  stEl.textContent = text;
+  if (state==='connected') { connected=true; btn.textContent='Desconectar'; btn.className='connected'; }
+  else { connected=false; btn.textContent='Conectar'; btn.className=''; }
 }
 
-function enableControls(on) {
-  const main = document.getElementById('mainArea');
-  main.classList.toggle('controls-disabled', !on);
-}
+function enableControls(on) { document.getElementById('mainArea').classList.toggle('controls-disabled', !on); }
+function updateMode(t) { document.getElementById('modeVal').textContent = t; }
 
-function updateMode(text) {
-  document.getElementById('modeVal').textContent = text;
-}
-
-// ── JOYSTICK ──────────────────────────────────────────
-const joystickBase = document.getElementById('joystickBase');
-const joystickKnob = document.getElementById('joystickKnob');
+// Joystick
+const jBase = document.getElementById('joystickBase');
+const jKnob = document.getElementById('joystickKnob');
 const speedVal = document.getElementById('speedVal');
 const angleVal = document.getElementById('angleVal');
-const bigSpeed  = document.getElementById('bigSpeed');
-const speedBar  = document.getElementById('speedBar');
+const bigSpeed = document.getElementById('bigSpeed');
+const speedBar = document.getElementById('speedBar');
 
-let joystickActive = false;
-let joystickCenter = { x: 0, y: 0 };
-let lastHeading = 0;
-let driveInterval = null;
-const MAX_RADIUS = 55;
-const DRIVE_HZ = 10; // send drive command 10x/sec
+let jActive = false, lastHeading = 0, driveInterval = null;
+let curJoy = { speed: 0, heading: 0 };
+const MAX_R = 55, DRIVE_HZ = 10;
 
-function getJoystickCenter() {
-  const rect = joystickBase.getBoundingClientRect();
-  return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-}
+function jCenter() { const r = jBase.getBoundingClientRect(); return { x: r.left+r.width/2, y: r.top+r.height/2 }; }
 
-function processJoystick(clientX, clientY) {
-  const center = getJoystickCenter();
-  let dx = clientX - center.x;
-  let dy = clientY - center.y;
-  const dist = Math.sqrt(dx*dx + dy*dy);
-  const clamped = Math.min(dist, MAX_RADIUS);
-
-  const nx = (dx / dist) * clamped || 0;
-  const ny = (dy / dist) * clamped || 0;
-
-  // Position knob
-  joystickKnob.style.transform = `translate(calc(-50% + ${nx}px), calc(-50% + ${ny}px))`;
-
-  // Calculate heading (0=up, clockwise)
-  let heading = Math.round(Math.atan2(dx, -dy) * 180 / Math.PI);
-  if (heading < 0) heading += 360;
-
-  // Speed = distance ratio
-  const speed = Math.round((clamped / MAX_RADIUS) * 255);
-
+function processJoy(cx, cy) {
+  const c = jCenter();
+  const dx = cx-c.x, dy = cy-c.y;
+  const dist = Math.sqrt(dx*dx+dy*dy);
+  const cl = Math.min(dist, MAX_R);
+  const nx = (dx/dist)*cl||0, ny = (dy/dist)*cl||0;
+  jKnob.style.transform = 'translate(calc(-50% + '+nx+'px), calc(-50% + '+ny+'px))';
+  let heading = Math.round(Math.atan2(dx,-dy)*180/Math.PI);
+  if (heading<0) heading+=360;
+  const speed = Math.round((cl/MAX_R)*255);
   lastHeading = heading;
-  speedVal.textContent = Math.round(speed / 255 * 100);
+  speedVal.textContent = Math.round(speed/255*100);
   angleVal.textContent = heading;
-  bigSpeed.textContent = Math.round(speed / 255 * 100);
-  speedBar.style.width = (speed / 255 * 100) + '%';
-
-  return { speed, heading };
+  bigSpeed.textContent = Math.round(speed/255*100);
+  speedBar.style.width = (speed/255*100)+'%';
+  return { speed:speed, heading:heading };
 }
 
-joystickBase.addEventListener('touchstart', e => {
-  e.preventDefault();
-  joystickActive = true;
-  const touch = e.changedTouches[0];
-  processJoystick(touch.clientX, touch.clientY);
-  startDriveLoop();
-}, { passive: false });
-
-joystickBase.addEventListener('touchmove', e => {
-  e.preventDefault();
-  if (!joystickActive) return;
-  const touch = e.changedTouches[0];
-  const state = processJoystick(touch.clientX, touch.clientY);
-  currentJoyState = state;
-}, { passive: false });
-
-joystickBase.addEventListener('touchend', e => {
-  e.preventDefault();
-  joystickActive = false;
-  joystickKnob.style.transform = 'translate(-50%, -50%)';
-  speedVal.textContent = '0';
-  bigSpeed.textContent = '0';
-  speedBar.style.width = '0%';
-  currentJoyState = { speed: 0, heading: lastHeading };
-  stopDriveLoop();
-  stopDrive();
+jBase.addEventListener('touchstart', function(e){ e.preventDefault(); jActive=true; curJoy=processJoy(e.changedTouches[0].clientX,e.changedTouches[0].clientY); startLoop(); },{passive:false});
+jBase.addEventListener('touchmove', function(e){ e.preventDefault(); if(!jActive)return; curJoy=processJoy(e.changedTouches[0].clientX,e.changedTouches[0].clientY); },{passive:false});
+jBase.addEventListener('touchend', function(e){
+  e.preventDefault(); jActive=false;
+  jKnob.style.transform='translate(-50%,-50%)';
+  speedVal.textContent='0'; bigSpeed.textContent='0'; speedBar.style.width='0%';
+  curJoy={speed:0,heading:lastHeading}; stopLoop(); stopDrive();
+});
+jBase.addEventListener('mousedown',function(e){jActive=true;curJoy=processJoy(e.clientX,e.clientY);startLoop();});
+document.addEventListener('mousemove',function(e){if(!jActive)return;curJoy=processJoy(e.clientX,e.clientY);});
+document.addEventListener('mouseup',function(){
+  if(!jActive)return; jActive=false;
+  jKnob.style.transform='translate(-50%,-50%)';
+  speedVal.textContent='0'; bigSpeed.textContent='0'; speedBar.style.width='0%';
+  stopLoop(); stopDrive();
 });
 
-// Mouse support (desktop testing)
-joystickBase.addEventListener('mousedown', e => {
-  joystickActive = true;
-  processJoystick(e.clientX, e.clientY);
-  startDriveLoop();
-});
-document.addEventListener('mousemove', e => {
-  if (!joystickActive) return;
-  const state = processJoystick(e.clientX, e.clientY);
-  currentJoyState = state;
-});
-document.addEventListener('mouseup', () => {
-  if (!joystickActive) return;
-  joystickActive = false;
-  joystickKnob.style.transform = 'translate(-50%, -50%)';
-  speedVal.textContent = '0';
-  bigSpeed.textContent = '0';
-  speedBar.style.width = '0%';
-  stopDriveLoop();
-  stopDrive();
-});
-
-let currentJoyState = { speed: 0, heading: 0 };
-
-function startDriveLoop() {
+function startLoop() {
   if (driveInterval) return;
-  driveInterval = setInterval(() => {
-    if (connected && currentJoyState.speed > 0) {
-      drive(currentJoyState.speed, currentJoyState.heading, 0);
+  driveInterval = setInterval(function() {
+    if (connected) {
+      const spd = curJoy.speed / 255;
+      const steer = Math.sin(curJoy.heading * Math.PI / 180);
+      driveAsRc(steer, spd);
     }
-  }, 1000 / DRIVE_HZ);
+  }, 1000/DRIVE_HZ);
 }
+function stopLoop() { if(driveInterval){clearInterval(driveInterval);driveInterval=null;} }
 
-function stopDriveLoop() {
-  if (driveInterval) {
-    clearInterval(driveInterval);
-    driveInterval = null;
-  }
-}
-
-// ── ACTION BUTTONS ────────────────────────────────────
-document.getElementById('btnHonk').addEventListener('click', async () => {
-  if (!connected) return;
-  await doHonk();
-  updateMode('Bocina!');
-  setTimeout(() => updateMode('Listo'), 1000);
-});
-
-document.getElementById('btnDrift').addEventListener('click', async () => {
-  if (!connected) return;
-  updateMode('Drift!');
-  await doDrift();
-  updateMode('Listo');
-});
-
-document.getElementById('btnSpin').addEventListener('click', async () => {
-  if (!connected) return;
-  updateMode('Spin 360!');
-  await doSpin();
-  updateMode('Listo');
-});
-
-// ── BOTTOM BUTTONS ────────────────────────────────────
-document.getElementById('connectBtn').addEventListener('click', async () => {
-  if (connected && device) {
-    device.gatt.disconnect();
-  } else {
-    await connectToMcQueen();
-  }
-});
-
-document.getElementById('wakeBtn').addEventListener('click', async () => {
-  if (!connected) { log('No conectado', 'warn'); return; }
+document.getElementById('btnHonk').addEventListener('click', async function(){ if(!connected)return; await doHonk(); updateMode('Test OK'); setTimeout(function(){updateMode('Listo');},3000); });
+document.getElementById('btnDrift').addEventListener('click', async function(){ if(!connected)return; updateMode('Drift!'); await doDrift(); updateMode('Listo'); });
+document.getElementById('btnSpin').addEventListener('click', async function(){ if(!connected)return; updateMode('Spin!'); await doSpin(); updateMode('Listo'); });
+document.getElementById('connectBtn').addEventListener('click', async function(){ if(connected&&device)device.gatt.disconnect(); else await connectToMcQueen(); });
+document.getElementById('wakeBtn').addEventListener('click', async function(){
+  if(!connected){log('No conectado','warn');return;}
   document.getElementById('wakeBtn').classList.add('waking');
-  await wakeDevice();
-  updateMode('Despertando...');
-  setTimeout(() => {
-    document.getElementById('wakeBtn').classList.remove('waking');
-    updateMode('Listo');
-  }, 1000);
+  await wakeDevice(); updateMode('Wake OK');
+  setTimeout(function(){document.getElementById('wakeBtn').classList.remove('waking');updateMode('Listo');},1000);
 });
+document.getElementById('sleepBtn').addEventListener('click', async function(){ if(!connected){log('No conectado','warn');return;} await sleepDevice(); updateMode('Dormido'); });
+document.getElementById('logBtn').addEventListener('click', function(){ document.getElementById('logOverlay').classList.toggle('visible'); });
+document.getElementById('logClose').addEventListener('click', function(){ document.getElementById('logOverlay').classList.remove('visible'); });
 
-document.getElementById('sleepBtn').addEventListener('click', async () => {
-  if (!connected) { log('No conectado', 'warn'); return; }
-  await sleepDevice();
-  updateMode('Dormido');
-});
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(function(){});
 
-document.getElementById('logBtn').addEventListener('click', () => {
-  document.getElementById('logOverlay').classList.toggle('visible');
-});
-
-document.getElementById('logClose').addEventListener('click', () => {
-  document.getElementById('logOverlay').classList.remove('visible');
-});
-
-// ── INIT ──────────────────────────────────────────────
-log('McQueen Controller listo 🏎️', 'info');
-log('Presioná CONECTAR y elegí el dispositivo LM-XXXX', 'info');
-log('Asegurate de usar Chrome en Android', 'warn');
+log('McQueen Controller listo', 'info');
+log('Presiona CONECTAR y elige LM-XXXX', 'info');
+log('Usa Chrome en Android', 'warn');
 </script>
 </body>
 </html>
